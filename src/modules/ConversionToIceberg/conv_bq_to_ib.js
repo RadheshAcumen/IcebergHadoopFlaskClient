@@ -7,8 +7,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import back from "../../assets/icons/back.png";
 import { formatString } from '../../components/helper/helper';
 
-
-
 const BigQueryToIceberg = () => {
     const location = useLocation();
     const currentPath = location.pathname.split('/')[1] || "Acumen Vega";
@@ -34,6 +32,7 @@ const BigQueryToIceberg = () => {
 
     const [conversionResult, setConversionResult] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [isSuccess, setIsSuccess] = useState(false);
 
     const handleSubmit = async (values) => {
         const formData = new FormData();
@@ -46,7 +45,8 @@ const BigQueryToIceberg = () => {
         }
 
         setLoading(true);
-        setConversionResult(null); // Clear previous result
+        setConversionResult(null);
+        setIsSuccess(false);
 
         try {
             const response = await fetch('http://127.0.0.1:5000/iceberg-to-big-query-conversion', {
@@ -57,12 +57,39 @@ const BigQueryToIceberg = () => {
             const result = await response.json();
 
             if (response.ok) {
-                setConversionResult(result.message || JSON.stringify(result, null, 2));
+                setIsSuccess(true);
+                // Handle different possible response formats
+                let displayResult = '';
+                
+                if (result.result) {
+                    // If backend returns {result: "formatted_string"}
+                    displayResult = result.result;
+                } else if (result.message) {
+                    // If backend returns {message: "formatted_string"}
+                    displayResult = result.message;
+                } else if (typeof result === 'string') {
+                    // If backend returns the string directly
+                    displayResult = result;
+                } else {
+                    // Fallback to JSON display with better formatting
+                    displayResult = `CONVERSION SUMMARY:
+Tables Processed: ${result.tables_processed || 'N/A'}
+Total Rows: ${result.total_rows || 'N/A'}
+Total Time: ${result.total_time_sec || 'N/A'} seconds
+Throughput: ${result.throughput || 'N/A'} rows/second
+
+✅ CONVERSION COMPLETED SUCCESSFULLY!
+All BigQuery tables have been converted to Iceberg format.`;
+                }
+                
+                setConversionResult(displayResult);
             } else {
+                setIsSuccess(false);
                 setConversionResult(result.error || 'Something went wrong.');
             }
 
         } catch (error) {
+            setIsSuccess(false);
             setConversionResult(`Error: ${error.message}`);
         } finally {
             setLoading(false);
@@ -88,9 +115,27 @@ const BigQueryToIceberg = () => {
                             <h1 className="text-2xl">{formatString(currentPath)}</h1>
                         </div>
 
-                        <InputField label="GCP Project ID:" name="project_id" type="text" placeholder="Enter GCP Project ID" value={values?.project_id} />
-                        <InputField label="BigQuery Dataset ID:" name="dataset_id" type="text" placeholder="Enter BigQuery Dataset ID" value={values?.dataset_id} />
-                        <InputField label="GCS Bucket Name:" name="gcs_bucket" type="text" placeholder="Enter GCS Bucket Name:" value={values?.gcs_bucket} />
+                        <InputField 
+                            label="GCP Project ID:" 
+                            name="project_id" 
+                            type="text" 
+                            placeholder="Enter GCP Project ID" 
+                            value={values?.project_id} 
+                        />
+                        <InputField 
+                            label="BigQuery Dataset ID:" 
+                            name="dataset_id" 
+                            type="text" 
+                            placeholder="Enter BigQuery Dataset ID" 
+                            value={values?.dataset_id} 
+                        />
+                        <InputField 
+                            label="GCS Bucket Name:" 
+                            name="gcs_bucket" 
+                            type="text" 
+                            placeholder="Enter GCS Bucket Name:" 
+                            value={values?.gcs_bucket} 
+                        />
                         <FileUpload
                             label="Upload Service Account JSON Key File:"
                             name="key_file"
@@ -105,15 +150,31 @@ const BigQueryToIceberg = () => {
                                 }
                             }}
                         />
-                        <button type="submit" className={`w-full ${loading ? "bg-blue-300" : "bg-primary"} text-white py-2 px-4 rounded-lg hover:bg-primaryHover mt-4`} disabled={loading}>
+                        <button 
+                            type="submit" 
+                            className={`w-full ${loading ? "bg-blue-300" : "bg-primary"} text-white py-2 px-4 rounded-lg hover:bg-primaryHover mt-4`} 
+                            disabled={loading}
+                        >
                             {loading ? "Converting..." : "Convert to IceBerg"}
                         </button>
 
-                        {/* Result from Backend */}
+                        {/* Enhanced Result Display */}
                         {conversionResult && (
-                            <div className="mt-5 mb-6 p-3 text-start text-black bg-gray-100 rounded-md whitespace-pre-wrap">
-                                <strong>Result:</strong><br />
-                                {conversionResult}
+                            <div className={`mt-5 mb-6 p-4 text-start rounded-md border-l-4 ${
+                                isSuccess 
+                                    ? 'bg-green-50 border-green-400 text-green-800' 
+                                    : 'bg-red-50 border-red-400 text-red-800'
+                            }`}>
+                                <div className="flex items-center mb-2">
+                                    <span className={`text-lg font-semibold ${
+                                        isSuccess ? 'text-green-600' : 'text-red-600'
+                                    }`}>
+                                        {isSuccess ? '✅ Conversion Result:' : '❌ Error:'}
+                                    </span>
+                                </div>
+                                <pre className="whitespace-pre-wrap text-sm font-mono bg-white p-3 rounded border overflow-x-auto">
+                                    {conversionResult}
+                                </pre>
                             </div>
                         )}
                     </Form>
