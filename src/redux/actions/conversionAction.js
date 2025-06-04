@@ -1,0 +1,8 @@
+export const CONVERT_TO_ICEBERG_REQUEST = 'CONVERT_TO_ICEBERG_REQUEST';
+export const CONVERT_TO_ICEBERG_SUCCESS = 'CONVERT_TO_ICEBERG_SUCCESS';
+export const CONVERT_TO_ICEBERG_FAILURE = 'CONVERT_TO_ICEBERG_FAILURE';
+
+export const convertToIceberg = (formData) => ({
+  type: CONVERT_TO_ICEBERG_REQUEST,
+  payload: formData,
+});
