@@ -1,26 +1,27 @@
-import { call, put, takeLatest } from 'redux-saga/effects';
-import axios from 'axios';
-import {
-  CONVERT_TO_ICEBERG_REQUEST,
-  CONVERT_TO_ICEBERG_SUCCESS,
-  CONVERT_TO_ICEBERG_FAILURE,
-} from '../actions/conversionActions';
+import { call, takeLatest } from 'redux-saga/effects';
+import * as ConversionApis from "../apis/conversionApi";
+import { CONVERT_TO_ICEBERG_REQUEST } from '../actions/types';
 
-function* handleConvertToIceberg(action) {
+function* handleConvertToIcebergWorker(action) {
   try {
-    const response = yield call(() =>
-      axios.post('http://localhost:5000/iceberg-to-big-query-conversion/', action.payload, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-    );
-    yield put({ type: CONVERT_TO_ICEBERG_SUCCESS, payload: response.data });
+    const res = yield call(ConversionApis.ConversionIcebergToBigquery, action.data);
+    console.log(res, ' this is the res ----------------------------------------------------');
+
+    if (res.status === 200) {
+      yield action.onSuccess(res);
+    } else {
+      yield action.onError(res);
+    }
   } catch (error) {
-    yield put({ type: CONVERT_TO_ICEBERG_FAILURE, error: error.message });
+    yield action.onError({
+      data: {
+        message: error,
+      },
+    });
   }
 }
 
-export default function* conversionSaga() {
-  yield takeLatest(CONVERT_TO_ICEBERG_REQUEST, handleConvertToIceberg);
+
+export function* handleConvertToIcebergWatcher() {
+  yield takeLatest(CONVERT_TO_ICEBERG_REQUEST, handleConvertToIcebergWorker);
 }
