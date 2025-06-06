@@ -172,7 +172,8 @@ All BigQuery tables have been converted to Iceberg format.`;
                                         {isSuccess ? '✅ Conversion Result:' : '❌ Error:'}
                                     </span>
                                 </div>
-                                <pre className="whitespace-pre-wrap text-sm font-mono bg-white p-3 rounded border overflow-x-auto">
+                                <pre className="whitespace-pre-wrap text-sm font-mono bg-white 
+                                p-3 rounded border overflow-x-auto">
                                     {conversionResult}
                                 </pre>
                             </div>
