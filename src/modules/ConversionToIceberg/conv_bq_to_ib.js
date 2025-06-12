@@ -196,6 +196,7 @@ import { useDispatch } from 'react-redux';
 import { convertToIceberg } from '../../redux/actions/conversionAction';
 import successToast from '../../components/toasts/successToast';
 import errorToast from '../../components/toasts/errorToast';
+import LogViewer from '../../components/formatResult';
 
 const BigQueryToIceberg = () => {
     const dispatch = useDispatch();
@@ -339,7 +340,7 @@ const BigQueryToIceberg = () => {
                                 <pre className="whitespace-pre-wrap text-sm font-mono bg-white p-3 rounded border overflow-x-auto">
                                     {typeof conversionResult === 'object' ? JSON.stringify(conversionResult, null, 2) : conversionResult}
                                 </pre>
-
+                                <LogViewer log={conversionResult?.result} />
                             </div>
                         )}
                     </Form>

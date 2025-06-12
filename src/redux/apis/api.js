@@ -3,7 +3,7 @@ import { url } from "../config";
 
 export const api = axios.create({
   baseURL: url,
-  timeout: 60000,
+  // timeout: 60000,
 });
 
 api.interceptors.request.use(
