@@ -1,9 +1,9 @@
-import { CONVERT_TO_ICEBERG_REQUEST, DATA_FILES_TO_ICEBERG } from "./types";
+import { BIGQUERY_TO_ICEBERG, DATA_FILES_TO_ICEBERG } from "./types";
 
 
-export const convertToIceberg = (data, onSuccess, onError) => {
+export const bigqueryToIceberg = (data, onSuccess, onError) => {
   return {
-    type: CONVERT_TO_ICEBERG_REQUEST,
+    type: BIGQUERY_TO_ICEBERG,
     data,
     onSuccess,
     onError,

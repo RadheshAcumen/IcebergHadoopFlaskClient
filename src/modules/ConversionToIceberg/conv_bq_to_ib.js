@@ -193,7 +193,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import back from "../../assets/icons/back.png";
 import { formatString } from '../../components/helper/helper';
 import { useDispatch } from 'react-redux';
-import { convertToIceberg } from '../../redux/actions/conversionAction';
+import { bigqueryToIceberg} from '../../redux/actions/conversionAction';
 import successToast from '../../components/toasts/successToast';
 import errorToast from '../../components/toasts/errorToast';
 import LogViewer from '../../components/formatResult';
@@ -259,7 +259,7 @@ const BigQueryToIceberg = () => {
         setIsSuccess(false);
 
         // Dispatch redux thunk with formData
-        dispatch(convertToIceberg(formData, onSuccess, onError));
+        dispatch(bigqueryToIceberg(formData, onSuccess, onError));
     };
 
 

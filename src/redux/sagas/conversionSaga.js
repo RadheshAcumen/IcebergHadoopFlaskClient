@@ -1,10 +1,10 @@
 import { call, takeLatest } from 'redux-saga/effects';
 import * as ConversionApis from "../apis/conversionApi";
-import { CONVERT_TO_ICEBERG_REQUEST, DATA_FILES_TO_ICEBERG } from '../actions/types';
+import { BIGQUERY_TO_ICEBERG, DATA_FILES_TO_ICEBERG } from '../actions/types';
 
-function* handleConvertToIcebergWorker(action) {
+function* handleBigQueryToIcebergWorker(action) {
   try {
-    const res = yield call(ConversionApis.ConversionIcebergToBigquery, action.data);
+    const res = yield call(ConversionApis.ConversionBigqueryToIceberg, action.data);
     console.log(res, ' this is the res ----------------------------------------------------');
 
     if (res.status === 200) {
@@ -40,8 +40,8 @@ function* handleDataFilesToIcebergWorker(action) {
   }
 }
 
-export function* handleConvertToIcebergWatcher() {
-  yield takeLatest(CONVERT_TO_ICEBERG_REQUEST, handleConvertToIcebergWorker);
+export function* handleBigQueryToIcebergWatcher() {
+  yield takeLatest(BIGQUERY_TO_ICEBERG, handleBigQueryToIcebergWorker);
 }
 
 export function* handleDataFilesToIcebergWatcher() {

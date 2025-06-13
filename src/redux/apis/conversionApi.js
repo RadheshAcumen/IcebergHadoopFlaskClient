@@ -1,6 +1,6 @@
 import { api } from "./api";
 
-export const ConversionIcebergToBigquery = (formData) => {
+export const ConversionBigqueryToIceberg = (formData) => {
   return api.post(`/iceberg-to-big-query-conversion`, formData);
 };
 
