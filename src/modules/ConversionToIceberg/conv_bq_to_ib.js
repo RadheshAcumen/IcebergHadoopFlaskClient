@@ -40,23 +40,24 @@ const BigQueryToIceberg = () => {
     const [loading, setLoading] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const onSuccess = (data) => {
+        console.log(data, ' on success');
+
         setIsSuccess(true);
-        setConversionResult(data.data.data.result);
-        successToast(data.data.data.message);
+        setConversionResult(data.data.data);
+        successToast(data.data.message);
         setLoading(false);
     };
 
-    const onError = (error) => {
+    const onError = (error, resetForm) => {
         setLoading(false);
         setIsSuccess(false);
-
-        const message = error?.data?.message || error?.message || "An unknown error occurred.";
+        const message = error?.data?.data?.message || error?.message || "An unknown error occurred.";
         setConversionResult(message);
         errorToast(message);
     };
 
 
-    const handleSubmit = async (values) => {
+    const handleSubmit = async (values, resetForm) => {
         console.log("form values", values);
         const formData = new FormData();
         formData.append('project_id', values.project_id);
@@ -71,17 +72,21 @@ const BigQueryToIceberg = () => {
         setConversionResult(null);
         setIsSuccess(false);
 
-        // Dispatch redux thunk with formData
-        dispatch(bigqueryToIceberg(formData, onSuccess, onError));
+        dispatch(bigqueryToIceberg(formData, onSuccess, (error) => onError(error, resetForm)));
     };
 
 
     return (
         <div className="flex w-full justify-center items-center h-[91.5vh] px-5">
+            {loading && (
+                <div className="fixed inset-0 z-50 bg-black bg-opacity-5 flex justify-center items-center">
+                    <div className="loader ease-linear rounded-full border-4 border-t-4 border-white h-12 w-12 animate-spin"></div>
+                </div>
+            )}
             <Formik
                 initialValues={initialValues}
                 validationSchema={validationSchema}
-                onSubmit={handleSubmit}
+                onSubmit={(values, { resetForm }) => handleSubmit(values, resetForm)}
             >
                 {({ values, setFieldValue }) => (
                     <Form className="p-5 md:p-10 lg:p-10 w-full md:w-2/3 bg-white rounded-md shadow-2xl max-h-[80vh] overflow-auto">

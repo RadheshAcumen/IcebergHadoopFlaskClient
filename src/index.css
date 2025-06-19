@@ -288,3 +288,12 @@ code {
 .delay-600 {
   animation-delay: 0.6s;
 }
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loader {
+  border-top-color: #3498db;
+  animation: spin 1s linear infinite;
+}
