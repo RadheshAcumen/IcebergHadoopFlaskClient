@@ -19,28 +19,15 @@ api.interceptors.request.use(
 );
 
 api.interceptors.response.use(
-  async (response) => {
-    return response;
+  async (config) => {
+    return config;
   },
   async (error) => {
-    // Network error (no response object)
-    if (!error.response) {
-      console.error("Network Error: ", error.message);
-
-      // Show a user-friendly message (or toast)
-      alert("Network error: Unable to reach the server. Please check your connection.");
-
-      // Optionally throw or return a custom error
-      return Promise.reject({ message: "Network Error", originalError: error });
-    }
-
-    const status = error.response.status;
-
+    const status = error?.response?.status;
     if (status === 401) {
       localStorage.clear();
-      window.location.reload();
+      window.location.reload()
     }
-
-    return Promise.reject(error); // Return error to be caught downstream
+    return error.response;
   }
 );

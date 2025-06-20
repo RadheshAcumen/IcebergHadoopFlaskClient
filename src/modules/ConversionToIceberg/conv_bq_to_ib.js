@@ -49,9 +49,10 @@ const BigQueryToIceberg = () => {
     };
 
     const onError = (error, resetForm) => {
+        console.log(error, 'error-------------------------', error?.data?.message, 'error?.data?.message');
         setLoading(false);
         setIsSuccess(false);
-        const message = error?.data?.data?.message || error?.message || "An unknown error occurred.";
+        const message = error?.data?.message;
         setConversionResult(message);
         errorToast(message);
     };

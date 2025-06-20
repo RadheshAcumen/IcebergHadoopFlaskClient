@@ -14,7 +14,7 @@ const LogViewer = ({ log }) => {
         <br />
       </React.Fragment>
     ))
-    : log;
+    : log === 'string' ? log : "An unknown error occurred.";
 
   return (
     <div className="whitespace-pre-wrap font-mono text-sm p-4 bg-gray-100 rounded overflow-auto max-h-[500px] border">
