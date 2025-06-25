@@ -5,5 +5,5 @@ export const ConversionBigqueryToIceberg = (formData) => {
 };
 
 export const ConversionDataFilesToIceberg = (formData) => {
-  return api.post(`/iceberg-to-big-query-conversion`, formData);
+  return api.post(`/convert`, formData);
 };
