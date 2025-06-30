@@ -10,7 +10,6 @@ import errorToast from '../../components/toasts/errorToast';
 import successToast from '../../components/toasts/successToast';
 import { dataFilesToIceberg } from '../../redux/actions/conversionAction';
 import { useDispatch } from 'react-redux';
-import LogViewer from '../../components/formatResult';
 
 
 const DataFilesToIceberg = () => {
@@ -59,8 +58,6 @@ const DataFilesToIceberg = () => {
     const [loading, setLoading] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const onSuccess = (data) => {
-        console.log(data.data.data, ' on success');
-
         setIsSuccess(true);
         setConversionResult(data.data.data);
         successToast(data.data.message);
@@ -68,7 +65,6 @@ const DataFilesToIceberg = () => {
     };
 
     const onError = (error, resetForm) => {
-        console.log(error, 'error-------------------------', error?.data?.message, 'error?.data?.message');
         setLoading(false);
         setIsSuccess(false);
         const message = error?.data?.message;
@@ -78,7 +74,6 @@ const DataFilesToIceberg = () => {
 
 
     const handleSubmit = async (values, resetForm) => {
-        console.log("form values", values);
         const formData = new FormData();
         formData.append('gcs_bucket', values.gcs_bucket);
 
@@ -100,6 +95,11 @@ const DataFilesToIceberg = () => {
 
     return (
         <div className="flex w-full justify-center items-center h-[91.5vh] px-5">
+            {loading && (
+                <div className="fixed inset-0 z-50 bg-black bg-opacity-5 flex justify-center items-center">
+                    <div className="loader ease-linear rounded-full border-4 border-t-4 border-white h-12 w-12 animate-spin"></div>
+                </div>
+            )}
             <Formik
                 initialValues={initialValues}
                 validationSchema={validationSchema}
@@ -172,7 +172,6 @@ const DataFilesToIceberg = () => {
                             {loading ? "Converting..." : "Convert to IceBerg"}
                         </button>
 
-                        {/* Enhanced Result Display */}
                         {conversionResult && (
                             <div className={`mt-5 mb-6 p-4 text-start rounded-md border-l-4 ${isSuccess
                                 ? 'bg-green-50 border-green-400 text-green-800'
@@ -184,11 +183,12 @@ const DataFilesToIceberg = () => {
                                         {isSuccess ? '✅ Conversion Result:' : '❌ Error:'}
                                     </span>
                                 </div>
-                                {/* <LogViewer log={conversionResult} /> */}
                                 <div className="mt-5 mb-6 p-3 text-start text-black max-h-90 overflow-y-auto bg-gray-100 rounded">
                                     {(Array.isArray(conversionResult)
                                         ? conversionResult
-                                        : [conversionResult] // wrap in array if it's a string
+                                        : [conversionResult]
+
+
                                     ).map((line, index) => (
                                         <p key={index} className="mb-1">{line}</p>
                                     ))}

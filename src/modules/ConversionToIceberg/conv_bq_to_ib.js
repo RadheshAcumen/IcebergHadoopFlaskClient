@@ -40,8 +40,6 @@ const BigQueryToIceberg = () => {
     const [loading, setLoading] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const onSuccess = (data) => {
-        console.log(data, ' on success');
-
         setIsSuccess(true);
         setConversionResult(data.data.data);
         successToast(data.data.message);
@@ -49,7 +47,6 @@ const BigQueryToIceberg = () => {
     };
 
     const onError = (error, resetForm) => {
-        console.log(error, 'error-------------------------', error?.data?.message, 'error?.data?.message');
         setLoading(false);
         setIsSuccess(false);
         const message = error?.data?.message;
