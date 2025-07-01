@@ -83,7 +83,7 @@ const PostgresqlToIceberg = () => {
     const navigate = useNavigate()
 
     return (
-        <div className="flex w-full justify-center items-center h-[91.5vh] px-5">
+        <div className="flex w-full justify-center items-center">
             <Formik
                 initialValues={initialValues}
                 validationSchema={validationSchema}
@@ -92,13 +92,7 @@ const PostgresqlToIceberg = () => {
                 {({ values, setFieldValue }) => (
                     <Form ref={scrollRef} className="p-5 md:p-10 lg:p-10 w-full md:w-2/3 bg-white rounded-md shadow-2xl max-h-[88vh] overflow-auto">
                         <div className="flex items-center gap-4 pb-6">
-                            < img
-                                src={back}
-                                alt="Icon"
-                                className="w-4 cursor-pointer"
-                                onClick={() => navigate(-1)}
-                            />
-                            <h1 className="text-2xl">{formatString(currentPath)}</h1>
+                            <h1 className="text-2xl">Postgresql To Iceberg</h1>
                         </div>
 
                         <h6 className="pb-1 text-2xl text-start">PostgreSQL Configuration</h6>

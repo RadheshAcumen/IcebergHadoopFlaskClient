@@ -85,7 +85,7 @@ const IcebergToSnowflake = () => {
     };
 
     return (
-        <div className="flex w-full justify-center items-center h-[91.5vh] p-5">
+        <div className="flex w-full justify-center items-center">
             <div className="w-full md:w-3/4 h-full bg-white rounded-md shadow-2xl">
                 <Formik
                     initialValues={initialValues}
@@ -96,13 +96,7 @@ const IcebergToSnowflake = () => {
                         <Form ref={scrollRef} className="p-5 lg:p-8 h-full overflow-y-auto">
 
                             <div className="flex items-center gap-4 pb-6">
-                                < img
-                                    src={back}
-                                    alt="Icon"
-                                    className="w-4 cursor-pointer"
-                                    onClick={() => navigate(-1)}
-                                />
-                                <h1 className="text-2xl">{formatString(currentPath)}</h1>
+                                <h1 className="text-2xl">Iceberg To Snowflake</h1>
                             </div>
 
 

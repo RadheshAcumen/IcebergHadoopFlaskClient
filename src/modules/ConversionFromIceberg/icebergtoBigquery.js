@@ -75,7 +75,7 @@ const IcebergToBigQuery = () => {
 
 
     return (
-        <div className="flex w-full justify-center items-center h-[91.5vh] px-5">
+        <div className="flex w-full justify-center items-center">
             {loading && (
                 <div className="fixed inset-0 z-50 bg-black bg-opacity-5 flex justify-center items-center">
                     <div className="loader ease-linear rounded-full border-4 border-t-4 border-white h-12 w-12 animate-spin"></div>
@@ -87,15 +87,9 @@ const IcebergToBigQuery = () => {
                 onSubmit={(values, { resetForm }) => handleSubmit(values, resetForm)}
             >
                 {({ values, setFieldValue }) => (
-                    <Form className="p-5 md:p-10 lg:p-10 w-full md:w-2/3 bg-white rounded-md shadow-2xl max-h-[80vh] overflow-auto">
+                    <Form className="p-5 md:p-10  w-full md:w-2/3 bg-white rounded-md shadow-2xl max-h-[80vh] overflow-auto">
                         <div className="flex items-center gap-4 pb-6">
-                            <img
-                                src={back}
-                                alt="Icon"
-                                className="w-4 cursor-pointer"
-                                // onClick={() => navigate(-1)}
-                            />
-                            <h1 className="text-2xl">{formatString(currentPath)}</h1>
+                            <h1 className="text-2xl">Iceberg To BigQuery</h1>
                         </div>
 
                         <InputField
@@ -138,7 +132,7 @@ const IcebergToBigQuery = () => {
                             className={`w-full ${loading ? "bg-blue-300" : "bg-primary"} text-white py-2 px-4 rounded-lg hover:bg-primaryHover mt-4`}
                             disabled={loading}
                         >
-                            {loading ? "Converting..." : "Convert to IceBerg"}
+                            {loading ? "Converting..." : "Convert to Big Query"}
                         </button>
 
                         {/* Enhanced Result Display */}
