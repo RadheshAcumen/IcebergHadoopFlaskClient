@@ -12,7 +12,7 @@ import successToast from '../../components/toasts/successToast';
 import errorToast from '../../components/toasts/errorToast';
 import LogViewer from '../../components/formatResult';
 
-const BigQueryToIceberg = () => {
+const IcebergToBigQuery = () => {
     const dispatch = useDispatch();
     const location = useLocation();
     const currentPath = location.pathname.split('/')[1] || "Acumen Vega";
@@ -163,4 +163,4 @@ const BigQueryToIceberg = () => {
     );
 };
 
-export default BigQueryToIceberg;
+export default IcebergToBigQuery;
