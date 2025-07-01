@@ -93,7 +93,7 @@ const IcebergToBigQuery = () => {
                                 src={back}
                                 alt="Icon"
                                 className="w-4 cursor-pointer"
-                                onClick={() => navigate(-1)}
+                                // onClick={() => navigate(-1)}
                             />
                             <h1 className="text-2xl">{formatString(currentPath)}</h1>
                         </div>
