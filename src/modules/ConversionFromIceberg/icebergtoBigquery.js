@@ -88,8 +88,8 @@ const IcebergToBigQuery = () => {
             >
                 {({ values, setFieldValue }) => (
                     <Form className="p-5 md:p-10  w-full md:w-2/3 bg-white rounded-md shadow-2xl max-h-[80vh] overflow-auto">
-                        <div className="flex items-center gap-4 pb-6">
-                            <h1 className="text-2xl">Iceberg To BigQuery</h1>
+                        <div className="flex justify-center pb-6">
+                            <h1 className="text-2xl">Iceberg To BigQuery Conversion</h1>
                         </div>
 
                         <InputField

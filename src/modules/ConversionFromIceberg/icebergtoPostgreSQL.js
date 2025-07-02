@@ -99,11 +99,11 @@ const IcebergToPostgreSQL = () => {
                 >
                     {({ values, setFieldValue }) => (
                         <Form ref={scrollRef} className="p-5 lg:p-8 h-full overflow-y-auto">
-                            <div className="flex items-center gap-4 pb-2">
-                                <h1 className="text-2xl">Iceberg To PostgreSQL</h1>
+                            <div className="flex justify-center gap-4 pb-2">
+                                <h1 className="text-2xl">Iceberg To PostgreSQL Conversion</h1>
                             </div>
 
-                            <h6 className="pb-1 text-2xl text-start pt-2">Iceberg Configuration</h6>
+                            <h6 className="pb-1 text-xl text-start pt-2">Iceberg Configuration</h6>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                 <InputField label="Bucket Name:" name="bucket_name" type="text" placeholder="Enter Bucket Name" value={values?.bucket_name} />
                                 <InputField label="Catalog Name:" name="catalog_name" type="text" placeholder="Enter Catalog Name" value={values?.catalog_name} />
@@ -124,7 +124,7 @@ const IcebergToPostgreSQL = () => {
                                 />
                             </div>
 
-                            <h6 className="pb-1 text-2xl text-start">PostgreSQL Configuration</h6>
+                            <h6 className="pb-1 text-xl text-start">PostgreSQL Configuration</h6>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                 <InputField label="PostgreSQL Host:" name="postgreSQL_host" type="text" placeholder="Enter PostgreSQL Host" value={values?.postgreSQL_host} />
                                 <InputField label="PostgreSQL Database:" name="postgreSQL_database" type="text" placeholder="Enter PostgreSQL Database" value={values?.postgreSQL_database} />
@@ -132,7 +132,7 @@ const IcebergToPostgreSQL = () => {
                                 <InputField label="PostgreSQL Password:" name="postgreSQL_password" type="password" placeholder="Enter PostgreSQL Password" value={values?.postgreSQL_password} />
                             </div>
 
-                            <h6 className="pb-1 text-2xl text-start">SQL File Configuration</h6>
+                            <h6 className="pb-1 text-xl text-start">SQL File Configuration</h6>
                             <FileUpload
                                 label="Upload SQL File:"
                                 name="sqlFile"

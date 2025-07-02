@@ -107,8 +107,8 @@ const DataFilesToIceberg = () => {
             >
                 {({ values, setFieldValue }) => (
                     <Form className="p-5 md:p-10 lg:p-10 w-full md:w-2/3 bg-white rounded-md shadow-2xl max-h-[80vh] overflow-auto">
-                        <div className="flex items-center gap-4 pb-6">
-                            <h1 className="text-2xl">DataFiles To Iceberg</h1>
+                        <div className="flex justify-center gap-4 pb-6">
+                            <h1 className="text-2xl">DataFiles To Iceberg Conversion</h1>
                         </div>
 
                         <InputField label="GCS Bucket Name:" name="gcs_bucket" type="text" placeholder="Enter GCS Bucket Name" value={values?.gcs_bucket} />
@@ -163,7 +163,7 @@ const DataFilesToIceberg = () => {
                             className={`w-full ${loading ? "bg-blue-300" : "bg-primary"} text-white py-2 px-4 rounded-lg hover:bg-primaryHover mt-4`}
                             disabled={loading}
                         >
-                            {loading ? "Converting..." : "Convert to IceBerg"}
+                            {loading ? "Converting..." : "Convert to Iceberg"}
                         </button>
 
                         {conversionResult && (

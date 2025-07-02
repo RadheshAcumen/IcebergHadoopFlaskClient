@@ -95,18 +95,18 @@ const IcebergToSnowflake = () => {
                     {({ values, setFieldValue }) => (
                         <Form ref={scrollRef} className="p-5 lg:p-8 h-full overflow-y-auto">
 
-                            <div className="flex items-center gap-4 pb-6">
-                                <h1 className="text-2xl">Iceberg To Snowflake</h1>
+                            <div className="flex justify-center gap-4 pb-6">
+                                <h1 className="text-2xl">Iceberg To Snowflake Conversion</h1>
                             </div>
 
 
-                            <h6 className="pb-1 text-2xl text-start">Iceberg Configuration</h6>
+                            <h6 className="pb-1 text-xl text-start">Iceberg Configuration</h6>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                 <InputField label="GCP Bucket Name:" name="gcp_bucket_name" type="text" placeholder="Enter GCP Bucket Name" value={values?.gcp_bucket_name} />
                                 <InputField label="Warehouse:" name="warehouse" type="text" placeholder="Enter Warehouse (root folder)" value={values?.warehouse} />
                             </div>
 
-                            <h6 className="pb-1 text-2xl text-start">Snowflake Configuration</h6>
+                            <h6 className="pb-1 text-xl text-start">Snowflake Configuration</h6>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                 <InputField label="Snowflake User:" name="snowflake_user" type="text" placeholder="Enter Snowflake User" value={values?.snowflake_user} />
                                 <InputField label="Snowflake Password:" name="snowflake_password" type="password" placeholder="Enter Snowflake Password" value={values?.snowflake_password} />
@@ -116,7 +116,7 @@ const IcebergToSnowflake = () => {
                                 <InputField label="Snowflake Schema:" name="snowflake_schema" type="text" placeholder="Enter Snowflake Schema" value={values?.snowflake_schema} />
                             </div>
 
-                            <h6 className="pb-1 text-2xl text-start">Service Account Key</h6>
+                            <h6 className="pb-1 text-xl text-start">Service Account Key</h6>
                             <FileUpload
                                 label="Upload Service Account Key File:"
                                 name="jsonFile"

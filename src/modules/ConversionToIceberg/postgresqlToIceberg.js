@@ -91,19 +91,19 @@ const PostgresqlToIceberg = () => {
             >
                 {({ values, setFieldValue }) => (
                     <Form ref={scrollRef} className="p-5 md:p-10 lg:p-10 w-full md:w-2/3 bg-white rounded-md shadow-2xl max-h-[88vh] overflow-auto">
-                        <div className="flex items-center gap-4 pb-6">
-                            <h1 className="text-2xl">Postgresql To Iceberg</h1>
+                        <div className="flex justify-center gap-4 pb-6">
+                            <h1 className="text-2xl">PostgreSQL To Iceberg Conversion</h1>
                         </div>
 
-                        <h6 className="pb-1 text-2xl text-start">PostgreSQL Configuration</h6>
+                        <h6 className="pb-1 text-xl text-start">PostgreSQL Configuration</h6>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                            <InputField label="Postgres Host:" name="postgres_host" type="text" placeholder="Enter Postgres Host" value={values?.postgres_host} />
-                            <InputField label="Postgres Database:" name="postgres_database" type="text" placeholder="Enter Postgres Database" value={values?.postgres_database} />
-                            <InputField label="Postgres User:" name="postgres_user" type="text" placeholder="Enter Postgres User" value={values?.postgres_user} />
-                            <InputField label="Postgres Password:" name="postgres_password" type="password" placeholder="Enter Postgres Password" value={values?.postgres_password} />
+                            <InputField label="PostgreSQL Host:" name="postgres_host" type="text" placeholder="Enter Postgres Host" value={values?.postgres_host} />
+                            <InputField label="PostgreSQL Database:" name="postgres_database" type="text" placeholder="Enter Postgres Database" value={values?.postgres_database} />
+                            <InputField label="PostgreSQL User:" name="postgres_user" type="text" placeholder="Enter Postgres User" value={values?.postgres_user} />
+                            <InputField label="PostgreSQL Password:" name="postgres_password" type="password" placeholder="Enter Postgres Password" value={values?.postgres_password} />
                         </div>
 
-                        <h6 className="pb-1 text-2xl text-start">GCP Configuration</h6>
+                        <h6 className="pb-1 text-xl text-start">GCP Configuration</h6>
                         <InputField label="GCS Bucket Name:" name="gcs_name" type="text" placeholder="Enter GCS Bucket Name" value={values?.gcs_name} />
 
                         <FileUpload
@@ -122,7 +122,7 @@ const PostgresqlToIceberg = () => {
                         />
 
                         <button type="submit" className={`w-full ${startLogging ? "bg-blue-300" : "bg-primary"} text-white py-2 px-4 rounded-lg hover:bg-primary-hover mt-4`} disabled={startLogging}>
-                            {startLogging ? "Converting..." : "Convert to IceBerg"}
+                            {startLogging ? "Converting..." : "Convert to Iceberg"}
                         </button>
 
                         <div className="mt-5 mb-6 p-3 text-start text-black max-h-90">
