@@ -16,6 +16,7 @@ const Dashbaord = () => {
     const [target, setTarget] = useState('');
     const [catalog, setCatalog] = useState('');
     const [SelectedComponent, setSelectedComponent] = useState(null);
+    const [isFormReady, setIsFormReady] = useState(false);
 
     const componentMap = {
         'Iceberg-BigQuery': <IcebergToBigQuery />,
@@ -51,84 +52,102 @@ const Dashbaord = () => {
             setSelectedComponent(null);
         }
     }, [source, target]);
+
+    useEffect(() => {
+        setIsFormReady(source && target && catalog);
+    }, [source, target, catalog]);
+
     return (
         <MainLayout>
             <section className="h-full overflow-auto">
-               <div className="container mx-auto flex flex-col items-center">
-                        {/* Selection Card */}
-                        <div className="bg-white shadow-lg rounded-lg p-4 flex flex-col md:flex-row md:space-x-6 w-full space-y-4 md:space-y-0 sticky top-0 z-10">
-                            {/* Source Format */}
-                            <div className="flex items-center w-full space-x-2">
-                                <label className="font-semibold text-gray-700 w-24">Source</label>
-                                <select
-                                    className="border border-gray-300 p-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                    value={source}
-                                    onChange={handleSourceChange}
-                                >
-                                    <option value="" disabled>Select source</option>
-                                    {sources.map((src) => (
-                                        <option key={src} value={src}>{src}</option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            {/* Target Format */}
-                            <div className="flex items-center w-full space-x-2">
-                                <label className="font-semibold text-gray-700 w-24">Target</label>
-                                {source === 'Iceberg' ? (
+                <div className="container mx-auto px-4">
+                    <div className={`transition-all duration-500 ease-in-out w-full mx-auto 
+                        ${isFormReady ? 'sticky top-0 z-10 bg-white' : 'flex justify-center items-center max-w-4xl'}
+                    `}>
+                        <div className={`w-full transition-all duration-500 ease-in-out
+                            transform ${isFormReady ? 'translate-y-0 opacity-100' : 'translate-y-[30vh] h-full min-h-[20rem]'}
+                        `}>
+                            {/* Selection Card */}
+                            <div className={`bg-white shadow-lg rounded-lg p-4 w-full 
+                            flex flex-col md:flex-row md:space-x-6 space-y-4 md:space-y-0 
+                            transition-all duration-900 ease-in-out
+                        `}>
+                                {/* Source Format */}
+                                <div className="flex items-center w-full space-x-2">
+                                    <label className="font-semibold text-gray-700 w-24">Source</label>
                                     <select
                                         className="border border-gray-300 p-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                        value={target}
-                                        onChange={handleTargetChange}
+                                        value={source}
+                                        onChange={handleSourceChange}
                                     >
-                                        <option value="" disabled>Select target</option>
-                                        {icebergTargets.map((tgt) => (
-                                            <option key={tgt} value={tgt}>{tgt}</option>
+                                        <option value="" disabled>Select source</option>
+                                        {sources.map((src) => (
+                                            <option key={src} value={src}>{src}</option>
                                         ))}
                                     </select>
-                                ) : source ? (
-                                    <input
-                                        type="text"
-                                        className="border border-gray-300 p-2 rounded w-full bg-gray-100"
-                                        value="Iceberg"
-                                        disabled
-                                    />
-                                ) : (
-                                    <input
-                                        type="text"
-                                        className="border border-gray-300 p-2 rounded w-full bg-gray-100"
-                                        placeholder="Select Target"
-                                        disabled
-                                    />
-                                )}
+                                </div>
+
+                                {/* Target Format */}
+                                <div className="flex items-center w-full space-x-2">
+                                    <label className="font-semibold text-gray-700 w-24">Target</label>
+                                    {source === 'Iceberg' ? (
+                                        <select
+                                            className="border border-gray-300 p-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                            value={target}
+                                            onChange={handleTargetChange}
+                                        >
+                                            <option value="" disabled>Select target</option>
+                                            {icebergTargets.map((tgt) => (
+                                                <option key={tgt} value={tgt}>{tgt}</option>
+                                            ))}
+                                        </select>
+                                    ) : source ? (
+                                        <input
+                                            type="text"
+                                            className="border border-gray-300 p-2 rounded w-full bg-gray-100"
+                                            value="Iceberg"
+                                            disabled
+                                        />
+                                    ) : (
+                                        <input
+                                            type="text"
+                                            className="border border-gray-300 p-2 rounded w-full bg-gray-100"
+                                            placeholder="Select Target"
+                                            disabled
+                                        />
+                                    )}
+                                </div>
+
+                                {/* Catalog */}
+                                <div className="flex items-center w-full space-x-2">
+                                    <label className="font-semibold text-gray-700 w-24">Catalog</label>
+                                    <select
+                                        className="border border-gray-300 p-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                        value={catalog}
+                                        onChange={handleCatalogChange}
+                                    >
+                                        <option value="" disabled>Select Catalog</option>
+                                        {catalogs.map((c) => (
+                                            <option key={c} value={c} disabled={c === 'Polarized'}>{c}</option>
+                                        ))}
+                                    </select>
+                                </div>
                             </div>
-
-                            {/* Catalog */}
-                            <div className="flex items-center w-full space-x-2">
-                                <label className="font-semibold text-gray-700 w-24">Catalog</label>
-                                <select
-                                    className="border border-gray-300 p-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                    value={catalog}
-                                    onChange={handleCatalogChange}
-                                >
-                                    <option value="" disabled>Select Catalog</option>
-                                    <option value="Hadoop">Hadoop</option>
-                                    <option value="Polarized" disabled>Polarized</option>
-                                </select>
-                            </div>
-                        </div>
-
-
-                        {/* Prompt if missing values */}
-                        {(!source || !target || !catalog) && (
-                            <p className="mt-4 text-gray-500">Please select source, target, and catalog to begin.</p>
-                        )}
-
-                        {/* Render component */}
-                        <div className="mt-10 w-full ">
-                            {SelectedComponent && catalog ? <div>{SelectedComponent}</div> : null}
                         </div>
                     </div>
+
+                    {/* Prompt if missing values */}
+                    {!isFormReady && (
+                        <p className="text-center text-gray-500 mt-2">Please select source, target, and catalog to begin.</p>
+                    )}
+
+                    {/* Component fade-in transition */}
+                    <div className={`transition-opacity duration-700 ease-in-out 
+                        ${isFormReady ? 'opacity-100 mt-10' : 'opacity-0 h-0 overflow-hidden'}
+                    `}>
+                        {SelectedComponent && <div>{SelectedComponent}</div>}
+                    </div>
+                </div>
             </section>
         </MainLayout>
     );
