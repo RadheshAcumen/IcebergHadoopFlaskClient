@@ -90,7 +90,7 @@ const IcebergToPostgreSQL = () => {
 
     return (
         <div className="flex w-full justify-center items-center">
-            <div className="w-full md:w-3/4 h-full bg-white rounded-md shadow-2xl">
+            <div className="w-full  h-full bg-white rounded-md shadow-2xl">
 
                 <Formik
                     initialValues={initialValues}
@@ -98,12 +98,12 @@ const IcebergToPostgreSQL = () => {
                     onSubmit={handleSubmit}
                 >
                     {({ values, setFieldValue }) => (
-                        <Form ref={scrollRef} className="p-5 lg:p-8 h-full overflow-y-auto">
-                            <div className="flex justify-center gap-4 pb-2">
+                        <Form ref={scrollRef} className="p-5 h-full overflow-y-auto">
+                            {/* <div className="flex justify-center gap-4 pb-2">
                                 <h1 className="text-2xl">Iceberg To PostgreSQL Conversion</h1>
-                            </div>
+                            </div> */}
 
-                            <h6 className="pb-1 text-xl text-start pt-2">Iceberg Configuration</h6>
+                            <h6 className="pb-1 text-xl text-start">Iceberg Configuration</h6>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                 <InputField label="Bucket Name:" name="bucket_name" type="text" placeholder="Enter Bucket Name" value={values?.bucket_name} />
                                 <InputField label="Catalog Name:" name="catalog_name" type="text" placeholder="Enter Catalog Name" value={values?.catalog_name} />

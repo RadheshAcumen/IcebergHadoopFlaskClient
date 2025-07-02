@@ -12,6 +12,7 @@ import Login from "../modules/auth/emailLogin";
 import ProtectedRoute from "./protectedRoute";
 import PrivateRoute from "./privateRoute";
 import IcebergToBigQuery from "../modules/ConversionFromIceberg/icebergtoBigquery";
+import Dashbaord from "../modules/dashboard";
 
 function MainRoute() {
     return (
@@ -23,8 +24,8 @@ function MainRoute() {
                 </Route>
 
                 <Route element={<PrivateRoute />}>
-                    <Route element={<AppLayout />}>
-                        <Route path="/dashboard" element={<Home />} />
+                 <Route path="/dashboard" element={<Dashbaord />} />
+                    {/* <Route element={<AppLayout />}>
                         <Route path="/iceberg-to-big-query-conversion" element={<IcebergToBigQuery />} />
                         <Route path="/data-files-to-iceberg-conversion" element={<DataFilesToIceberg />} />
                         <Route path="/postgresql-to-iceberg-conversion" element={<PostgresqlToIceberg />} />
@@ -32,7 +33,7 @@ function MainRoute() {
                         <Route path="/iceberg-to-postgreSQL-conversion" element={<IcebergToPostgreSQL />} />
                         <Route path="/iceberg-to-snowflake-conversion" element={<IcebergToSnowflake />} />
                         <Route path="/iceberg-to-sql-server-conversion" element={<SQLServerToIceberg />} />
-                    </Route>
+                    </Route> */}
                 </Route>
             </Routes>
         </Router>
