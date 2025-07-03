@@ -4,8 +4,6 @@ import * as Yup from 'yup';
 import InputField from '../../components/forms/inputFiled';
 import FileUpload from '../../components/forms/fileUpload';
 import { useLocation, useNavigate } from 'react-router-dom';
-import back from "../../assets/icons/back.png"
-import { formatString } from '../../components/helper/helper';
 
 const SQLServerToIceberg = () => {
     const initialValues = {
@@ -46,8 +44,7 @@ const SQLServerToIceberg = () => {
     const [startLogging, setStartLogging] = useState(false);
     const scrollRef = useRef(null);
     const location = useLocation();
-    const currentPath = location.pathname.split('/')[1] || "Acumen Vega";
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (startLogging) {
@@ -70,57 +67,76 @@ const SQLServerToIceberg = () => {
 
     const handleSubmit = (values) => {
         console.log('Form values:', values);
-        setDisplayedLogs([]); // Reset logs before starting
+        setDisplayedLogs([]);
         setStartLogging(true);
     };
 
     return (
-        <div className="flex w-full justify-center items-center">
-            <Formik
-                initialValues={initialValues}
-                validationSchema={validationSchema}
-                onSubmit={handleSubmit}
-            >
-                {({ values, setFieldValue }) => (
-                    <Form ref={scrollRef} className="p-5 md:p-10 lg:p-10 w-full md:w-2/3 bg-white rounded-md shadow-2xl max-h-[88vh] overflow-auto">
+        <div className="flex justify-center items-start w-full h-full py-5 px-4">
+            <div className="w-full">
+                <Formik
+                    initialValues={initialValues}
+                    validationSchema={validationSchema}
+                    onSubmit={handleSubmit}
+                >
+                    {({ values, setFieldValue }) => (
+                        <Form className="space-y-6">
+                            {/* SQL Server Configuration */}
+                            <section>
+                                <h2 className="text-xl text-start font-medium text-gray-700 mb-2">SQL Server Configuration</h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10">
+                                    <InputField label="Server Address:" name="server_address" type="text" placeholder="e.g., localhost:1433" value={values.server_address} />
+                                    <InputField label="Username:" name="username" type="text" placeholder="Enter Username" value={values.username} />
+                                    <InputField label="Password:" name="password" type="password" placeholder="Enter Password" value={values.password} />
+                                </div>
+                            </section>
 
-                        <div className="flex justify-center gap-4 pb-6">
-                            <h1 className="text-2xl">SQL Server To Iceberg Conversion</h1>
-                        </div>
+                            {/* GCP / Iceberg Configuration */}
+                            <section>
+                                <h2 className="text-xl text-start font-medium text-gray-700 mb-2">GCP & Iceberg Configuration</h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10">
+                                    <FileUpload
+                                        label="Upload GCP JSON Key File:"
+                                        name="jsonFile"
+                                        accept=".json"
+                                        value={values.jsonFile}
+                                        onChange={(e) => {
+                                            const file = e.currentTarget.files[0];
+                                            if (file && file.type === 'application/json') {
+                                                setFieldValue('jsonFile', file);
+                                            } else {
+                                                alert('Only JSON files are allowed!');
+                                            }
+                                        }}
+                                    />
+                                </div>
+                            </section>
 
-                        <h6 className="pb-1 text-xl text-start">SQL Server Settings</h6>
-                        <InputField label="Server Address:" name="server_address" type="text" placeholder="Enter Server Address (e.g., localhost:1433)" value={values?.server_address} />
-                        <InputField label="Username:" name="username" type="text" placeholder="Enter Username" value={values?.username} />
-                        <InputField label="Password:" name="password" type="password" placeholder="Enter Password" value={values?.password} />
+                            {/* Submit Button */}
+                            <button
+                                type="submit"
+                                className={`w-full text-white py-2 px-4 rounded-lg transition-colors duration-200 
+                                    ${startLogging ? "bg-primary/50 cursor-not-allowed" : "bg-primary hover:bg-primaryHover"}`}
+                                disabled={startLogging}
+                            >
+                                {startLogging ? "Converting..." : "Convert to Iceberg"}
+                            </button>
 
-                        <h6 className="pb-1 text-xl text-start">GCP and Iceberg Configuration</h6>
-                        <FileUpload
-                            label="Upload GCP JSON Key File:"
-                            name="jsonFile"
-                            accept=".json"
-                            value={values?.jsonFile}
-                            onChange={(e) => {
-                                const file = e.currentTarget.files[0];
-                                if (file && file.type === 'application/json') {
-                                    setFieldValue('jsonFile', file);
-                                } else {
-                                    alert('Only JSON files are allowed!');
-                                }
-                            }}
-                        />
-
-                        <button type="submit" className={`w-full ${startLogging ? "bg-blue-300" : "bg-primary"} text-white py-2 px-4 rounded-lg hover:bg-primary-hover mt-4`} disabled={startLogging}>
-                            {startLogging ? "Converting..." : "Convert to Iceberg"}
-                        </button>
-
-                        <div className="mt-5 mb-6 p-3 text-start text-black max-h-90">
-                            {displayedLogs.map((log, index) => (
-                                <p key={index} className="mb-1">{log}</p>
-                            ))}
-                        </div>
-                    </Form>
-                )}
-            </Formik>
+                            {/* Logs Display */}
+                            {displayedLogs.length > 0 && (
+                                <div
+                                    ref={scrollRef}
+                                    className="mt-6 p-4 rounded-md bg-gray-100 max-h-80 overflow-y-auto text-sm text-gray-800"
+                                >
+                                    {displayedLogs.map((log, index) => (
+                                        <p key={index} className="mb-1">{log}</p>
+                                    ))}
+                                </div>
+                            )}
+                        </Form>
+                    )}
+                </Formik>
+            </div>
         </div>
     );
 };

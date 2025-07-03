@@ -143,7 +143,7 @@ const Dashbaord = () => {
 
                     {/* Component fade-in transition */}
                     <div className={`transition-opacity duration-700 ease-in-out 
-                        ${isFormReady ? 'opacity-100 mt-10' : 'opacity-0 h-0 overflow-hidden'}
+                        ${isFormReady ? 'opacity-100 mt-4' : 'opacity-0 h-0 overflow-hidden'}
                     `}>
                         {SelectedComponent && <div>{SelectedComponent}</div>}
                     </div>

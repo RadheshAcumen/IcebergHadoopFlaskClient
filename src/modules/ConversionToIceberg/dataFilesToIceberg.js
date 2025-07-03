@@ -1,22 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import InputField from '../../components/forms/inputFiled';
 import FileUpload from '../../components/forms/fileUpload';
 import { useLocation, useNavigate } from 'react-router-dom';
-import back from "../../assets/icons/back.png"
-import { formatString } from '../../components/helper/helper';
-import errorToast from '../../components/toasts/errorToast';
-import successToast from '../../components/toasts/successToast';
-import { dataFilesToIceberg } from '../../redux/actions/conversionAction';
 import { useDispatch } from 'react-redux';
-
+import { dataFilesToIceberg } from '../../redux/actions/conversionAction';
+import successToast from '../../components/toasts/successToast';
+import errorToast from '../../components/toasts/errorToast';
+import LogViewer from '../../components/formatResult';
 
 const DataFilesToIceberg = () => {
     const dispatch = useDispatch();
     const location = useLocation();
-    const currentPath = location.pathname.split('/')[1] || "Acumen Vega";
     const navigate = useNavigate();
+
     const initialValues = {
         gcs_bucket: '',
         json_key: null,
@@ -34,7 +32,7 @@ const DataFilesToIceberg = () => {
             .required('Required!')
             .test(
                 'fileType',
-                'Only files of type CSV, AVRO, PARQUET, ORC, or JSON are allowed!',
+                'Only CSV, AVRO, PARQUET, ORC, or JSON files are allowed!',
                 (value) => {
                     if (!value) return false;
                     const allowedTypes = [
@@ -57,6 +55,7 @@ const DataFilesToIceberg = () => {
     const [conversionResult, setConversionResult] = useState(null);
     const [loading, setLoading] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
+
     const onSuccess = (data) => {
         setIsSuccess(true);
         setConversionResult(data.data.data);
@@ -67,16 +66,14 @@ const DataFilesToIceberg = () => {
     const onError = (error, resetForm) => {
         setLoading(false);
         setIsSuccess(false);
-        const message = error?.data?.message;
+        const message = error?.data?.message || 'Something went wrong!';
         setConversionResult(message);
         errorToast(message);
     };
 
-
     const handleSubmit = async (values, resetForm) => {
         const formData = new FormData();
         formData.append('gcs_bucket', values.gcs_bucket);
-
         if (values.json_key instanceof File) {
             formData.append('json_key', values.json_key);
         }
@@ -91,107 +88,105 @@ const DataFilesToIceberg = () => {
         dispatch(dataFilesToIceberg(formData, onSuccess, (error) => onError(error, resetForm)));
     };
 
-
-
     return (
-        <div className="flex w-full justify-center items-center">
-            {loading && (
-                <div className="fixed inset-0 z-50 bg-black bg-opacity-5 flex justify-center items-center">
-                    <div className="loader ease-linear rounded-full border-4 border-t-4 border-white h-12 w-12 animate-spin"></div>
-                </div>
-            )}
-            <Formik
-                initialValues={initialValues}
-                validationSchema={validationSchema}
-                onSubmit={handleSubmit}
-            >
-                {({ values, setFieldValue }) => (
-                    <Form className="p-5 md:p-10 lg:p-10 w-full md:w-2/3 bg-white rounded-md shadow-2xl max-h-[80vh] overflow-auto">
-                        <div className="flex justify-center gap-4 pb-6">
-                            <h1 className="text-2xl">DataFiles To Iceberg Conversion</h1>
-                        </div>
-
-                        <InputField label="GCS Bucket Name:" name="gcs_bucket" type="text" placeholder="Enter GCS Bucket Name" value={values?.gcs_bucket} />
-
-                        <FileUpload
-                            label="Upload Service Account JSON Key File:"
-                            name="json_key"
-                            accept=".json"
-                            value={values?.json_key}
-                            onChange={(e) => {
-                                const file = e.currentTarget.files[0];
-                                if (file && file.type === 'application/json') {
-                                    setFieldValue('json_key', file);
-                                } else {
-                                    alert('Only JSON files are allowed!');
-                                }
-                            }}
-                        />
-                        <FileUpload
-                            label="Choose A Data File:"
-                            name="data_file"
-                            accept=".csv,.json,.avro,.parquet,.orc"
-                            value={values?.data_file}
-                            placeholder="(.CSV, AVRO, PARQUET, ORC, JSON)"
-                            onChange={(e) => {
-                                const file = e.currentTarget.files[0];
-                                if (file) {
-                                    const allowedTypes = [
-                                        'text/csv',
-                                        'application/json',
-                                        'application/vnd.apache.avro',
-                                        'application/parquet',
-                                        'application/orc',
-                                    ];
-                                    const allowedExtensions = ['.csv', '.json', '.avro', '.parquet', '.orc'];
-                                    const fileExtension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
-
-                                    if (
-                                        allowedTypes.includes(file.type) ||
-                                        allowedExtensions.includes(fileExtension)
-                                    ) {
-                                        setFieldValue('data_file', file);
-                                    } else {
-                                        alert('Only CSV, AVRO, PARQUET, ORC, or JSON files are allowed!');
-                                    }
-                                }
-                            }}
-                        />
-
-                        <button
-                            type="submit"
-                            className={`w-full ${loading ? "bg-blue-300" : "bg-primary"} text-white py-2 px-4 rounded-lg hover:bg-primaryHover mt-4`}
-                            disabled={loading}
-                        >
-                            {loading ? "Converting..." : "Convert to Iceberg"}
-                        </button>
-
-                        {conversionResult && (
-                            <div className={`mt-5 mb-6 p-4 text-start rounded-md border-l-4 ${isSuccess
-                                ? 'bg-green-50 border-green-400 text-green-800'
-                                : 'bg-red-50 border-red-400 text-red-800'
-                                }`}>
-                                <div className="flex items-center mb-2">
-                                    <span className={`text-lg font-semibold ${isSuccess ? 'text-green-600' : 'text-red-600'
-                                        }`}>
-                                        {isSuccess ? '✅ Conversion Result:' : '❌ Error:'}
-                                    </span>
-                                </div>
-                                <div className="mt-5 mb-6 p-3 text-start text-black max-h-90 overflow-y-auto bg-gray-100 rounded">
-                                    {(Array.isArray(conversionResult)
-                                        ? conversionResult
-                                        : [conversionResult]
-
-
-                                    ).map((line, index) => (
-                                        <p key={index} className="mb-1">{line}</p>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-                    </Form>
+        <div className="flex justify-center items-start w-full h-full py-5 px-4">
+            <div className="w-full">
+                {loading && (
+                    <div className="fixed inset-0 z-50 bg-black bg-opacity-10 flex justify-center items-center">
+                        <div className="loader ease-linear rounded-full border-4 border-t-4 border-primary h-12 w-12 animate-spin"></div>
+                    </div>
                 )}
-            </Formik>
+
+                <Formik
+                    initialValues={initialValues}
+                    validationSchema={validationSchema}
+                    onSubmit={(values, { resetForm }) => handleSubmit(values, resetForm)}
+                >
+                    {({ values, setFieldValue }) => (
+                        <Form className="space-y-4">
+                            <InputField
+                                label="GCS Bucket Name:"
+                                name="gcs_bucket"
+                                type="text"
+                                placeholder="Enter GCS Bucket Name"
+                                value={values.gcs_bucket}
+                            />
+
+                            <FileUpload
+                                label="Upload Service Account JSON Key File:"
+                                name="json_key"
+                                accept=".json"
+                                value={values.json_key}
+                                onChange={(e) => {
+                                    const file = e.currentTarget.files[0];
+                                    if (file && file.type === 'application/json') {
+                                        setFieldValue('json_key', file);
+                                    } else {
+                                        alert('Only JSON files are allowed!');
+                                    }
+                                }}
+                            />
+
+                            <FileUpload
+                                label="Choose A Data File:"
+                                name="data_file"
+                                accept=".csv,.json,.avro,.parquet,.orc"
+                                value={values.data_file}
+                                placeholder="(.CSV, AVRO, PARQUET, ORC, JSON)"
+                                onChange={(e) => {
+                                    const file = e.currentTarget.files[0];
+                                    if (file) {
+                                        const allowedTypes = [
+                                            'text/csv',
+                                            'application/json',
+                                            'application/vnd.apache.avro',
+                                            'application/parquet',
+                                            'application/orc',
+                                        ];
+                                        const allowedExtensions = ['.csv', '.json', '.avro', '.parquet', '.orc'];
+                                        const fileExtension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
+
+                                        if (
+                                            allowedTypes.includes(file.type) ||
+                                            allowedExtensions.includes(fileExtension)
+                                        ) {
+                                            setFieldValue('data_file', file);
+                                        } else {
+                                            alert('Only CSV, AVRO, PARQUET, ORC, or JSON files are allowed!');
+                                        }
+                                    }
+                                }}
+                            />
+
+                            <button
+                                type="submit"
+                                className={`w-full text-white py-2 px-4 rounded-lg mt-4 transition-colors duration-200 
+                                    ${loading ? "bg-primary/50 cursor-not-allowed" : "bg-primary hover:bg-primaryHover"}`}
+                                disabled={loading}
+                            >
+                                {loading ? "Converting..." : "Convert to Iceberg"}
+                            </button>
+
+                            {conversionResult && (
+                                <div
+                                    className={`mt-6 p-4 text-sm text-start rounded-md border-l-4
+                                    ${isSuccess
+                                            ? 'bg-green-50 border-green-400 text-green-800'
+                                            : 'bg-red-50 border-red-400 text-red-800'
+                                        }`}
+                                >
+                                    <div className="flex items-center mb-2">
+                                        <span className={`text-lg font-semibold ${isSuccess ? 'text-green-600' : 'text-red-600'}`}>
+                                            {isSuccess ? '✅ Conversion Result:' : '❌ Error:'}
+                                        </span>
+                                    </div>
+                                    <LogViewer log={conversionResult} />
+                                </div>
+                            )}
+                        </Form>
+                    )}
+                </Formik>
+            </div>
         </div>
     );
 };

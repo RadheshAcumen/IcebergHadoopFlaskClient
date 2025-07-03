@@ -4,13 +4,12 @@ import * as Yup from 'yup';
 import InputField from '../../components/forms/inputFiled';
 import FileUpload from '../../components/forms/fileUpload';
 import { useLocation, useNavigate } from 'react-router-dom';
-import back from "../../assets/icons/back.png"
-import { formatString } from '../../components/helper/helper';
 
 const IcebergToSnowflake = () => {
     const location = useLocation();
     const currentPath = location.pathname.split('/')[1] || "Acumen Vega";
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+
     const initialValues = {
         gcp_bucket_name: '',
         warehouse: '',
@@ -80,67 +79,77 @@ const IcebergToSnowflake = () => {
 
     const handleSubmit = (values) => {
         console.log('Form values:', values);
-        setDisplayedLogs([]); // Reset logs before starting
+        setDisplayedLogs([]);
         setStartLogging(true);
     };
 
     return (
-        <div className="flex w-full justify-center items-center">
-            <div className="w-full md:w-3/4 h-full bg-white rounded-md shadow-2xl">
+        <div className="flex justify-center items-start w-full h-full py-5 px-4">
+            <div className="w-full">
                 <Formik
                     initialValues={initialValues}
                     validationSchema={validationSchema}
                     onSubmit={handleSubmit}
                 >
                     {({ values, setFieldValue }) => (
-                        <Form ref={scrollRef} className="p-5 lg:p-8 h-full overflow-y-auto">
+                        <Form className="space-y-1">
+                            <section>
+                                <h2 className="text-xl text-start font-medium text-gray-700 mb-2">Iceberg Configuration</h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10">
+                                    <InputField label="GCP Bucket Name:" name="gcp_bucket_name" type="text" placeholder="Enter GCP Bucket Name" value={values.gcp_bucket_name} />
+                                    <InputField label="Warehouse:" name="warehouse" type="text" placeholder="Enter Warehouse (root folder)" value={values.warehouse} />
+                                </div>
+                            </section>
 
-                            <div className="flex justify-center gap-4 pb-6">
-                                <h1 className="text-2xl">Iceberg To Snowflake Conversion</h1>
-                            </div>
+                            <section>
+                                <h2 className="text-xl text-start font-medium text-gray-700 mb-2">Snowflake Configuration</h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10">
+                                    <InputField label="Snowflake User:" name="snowflake_user" type="text" placeholder="Enter Snowflake User" value={values.snowflake_user} />
+                                    <InputField label="Snowflake Password:" name="snowflake_password" type="password" placeholder="Enter Snowflake Password" value={values.snowflake_password} />
+                                    <InputField label="Snowflake Account:" name="snowflake_account" type="text" placeholder="Enter Snowflake Account" value={values.snowflake_account} />
+                                    <InputField label="Snowflake Warehouse:" name="snowflake_warehouse" type="text" placeholder="Enter Snowflake Warehouse" value={values.snowflake_warehouse} />
+                                    <InputField label="Snowflake Database:" name="snowflake_database" type="text" placeholder="Enter Snowflake Database" value={values.snowflake_database} />
+                                    <InputField label="Snowflake Schema:" name="snowflake_schema" type="text" placeholder="Enter Snowflake Schema" value={values.snowflake_schema} />
+                                </div>
+                            </section>
 
+                            <section>
+                                <h2 className="text-xl text-start font-medium text-gray-700 mb-2">Service Account Key</h2>
+                                <FileUpload
+                                    label="Upload Service Account Key File:"
+                                    name="jsonFile"
+                                    accept=".json"
+                                    value={values.jsonFile}
+                                    onChange={(e) => {
+                                        const file = e.currentTarget.files[0];
+                                        if (file && file.type === 'application/json') {
+                                            setFieldValue('jsonFile', file);
+                                        } else {
+                                            alert('Only JSON files are allowed!');
+                                        }
+                                    }}
+                                />
+                            </section>
 
-                            <h6 className="pb-1 text-xl text-start">Iceberg Configuration</h6>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                <InputField label="GCP Bucket Name:" name="gcp_bucket_name" type="text" placeholder="Enter GCP Bucket Name" value={values?.gcp_bucket_name} />
-                                <InputField label="Warehouse:" name="warehouse" type="text" placeholder="Enter Warehouse (root folder)" value={values?.warehouse} />
-                            </div>
-
-                            <h6 className="pb-1 text-xl text-start">Snowflake Configuration</h6>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                <InputField label="Snowflake User:" name="snowflake_user" type="text" placeholder="Enter Snowflake User" value={values?.snowflake_user} />
-                                <InputField label="Snowflake Password:" name="snowflake_password" type="password" placeholder="Enter Snowflake Password" value={values?.snowflake_password} />
-                                <InputField label="Snowflake Account:" name="snowflake_account" type="text" placeholder="Enter Snowflake Account" value={values?.snowflake_account} />
-                                <InputField label="Snowflake Warehouse:" name="snowflake_warehouse" type="text" placeholder="Enter Snowflake Warehouse" value={values?.snowflake_warehouse} />
-                                <InputField label="Snowflake Database:" name="snowflake_database" type="text" placeholder="Enter Snowflake Database" value={values?.snowflake_database} />
-                                <InputField label="Snowflake Schema:" name="snowflake_schema" type="text" placeholder="Enter Snowflake Schema" value={values?.snowflake_schema} />
-                            </div>
-
-                            <h6 className="pb-1 text-xl text-start">Service Account Key</h6>
-                            <FileUpload
-                                label="Upload Service Account Key File:"
-                                name="jsonFile"
-                                accept=".json"
-                                value={values?.jsonFile}
-                                onChange={(e) => {
-                                    const file = e.currentTarget.files[0];
-                                    if (file && file.type === 'application/json') {
-                                        setFieldValue('jsonFile', file);
-                                    } else {
-                                        alert('Only JSON files are allowed!');
-                                    }
-                                }}
-                            />
-
-                            <button type="submit" className={`w-full ${startLogging ? "bg-blue-300" : "bg-primary"} text-white py-2 px-4 rounded-lg hover:bg-primary-hover mt-4`} disabled={startLogging}>
+                            <button
+                                type="submit"
+                                className={`w-full text-white py-2 px-4 rounded-lg transition-colors duration-200 
+                                    ${startLogging ? "bg-primary/50 cursor-not-allowed" : "bg-primary hover:bg-primaryHover"}`}
+                                disabled={startLogging}
+                            >
                                 {startLogging ? "Converting..." : "Convert to Snowflake"}
                             </button>
 
-                            <div className="mt-5 mb-6 p-3 text-start text-black max-h-90">
-                                {displayedLogs.map((log, index) => (
-                                    <p key={index} className="mb-1">{log}</p>
-                                ))}
-                            </div>
+                            {displayedLogs.length > 0 && (
+                                <div
+                                    ref={scrollRef}
+                                    className="mt-6 p-4 rounded-md bg-gray-100 max-h-80 overflow-y-auto text-sm text-gray-800"
+                                >
+                                    {displayedLogs.map((log, index) => (
+                                        <p key={index} className="mb-1">{log}</p>
+                                    ))}
+                                </div>
+                            )}
                         </Form>
                     )}
                 </Formik>

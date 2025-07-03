@@ -20,7 +20,7 @@ const PrivateRoute = () => {
   return localStorage.getItem("accessToken") ? (
     <main className="h-full w-full p-2">
       <Navbar />
-      <div className="flex flex-col lg:flex-row gap-2 py-2 h-[calc(100vh-5.5rem)]">
+      <div className="flex flex-col lg:flex-row gap-2 py-2 h-[calc(100vh-6.5rem)]">
         <div className="w-full h-full">
           <Outlet />
         </div>

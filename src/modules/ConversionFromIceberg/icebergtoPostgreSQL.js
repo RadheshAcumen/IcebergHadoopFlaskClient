@@ -4,8 +4,6 @@ import * as Yup from 'yup';
 import InputField from '../../components/forms/inputFiled';
 import FileUpload from '../../components/forms/fileUpload';
 import { useLocation, useNavigate } from 'react-router-dom';
-import back from "../../assets/icons/back.png"
-import { formatString } from '../../components/helper/helper';
 
 const IcebergToPostgreSQL = () => {
     const initialValues = {
@@ -17,7 +15,7 @@ const IcebergToPostgreSQL = () => {
         postgreSQL_database: '',
         postgreSQL_user: '',
         postgreSQL_password: '',
-        sqlFile: '',
+        sqlFile: null,
     };
 
     const validationSchema = Yup.object({
@@ -61,7 +59,7 @@ const IcebergToPostgreSQL = () => {
     const scrollRef = useRef(null);
     const location = useLocation();
     const currentPath = location.pathname.split('/')[1] || "Acumen Vega";
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (startLogging) {
@@ -84,13 +82,14 @@ const IcebergToPostgreSQL = () => {
 
     const handleSubmit = (values) => {
         console.log('Form values:', values);
-        setDisplayedLogs([]); // Reset logs before starting
+        setDisplayedLogs([]);
         setStartLogging(true);
     };
 
     return (
-        <div className="flex w-full justify-center items-center">
-            <div className="w-full  h-full bg-white rounded-md shadow-2xl">
+        <div className="flex justify-center items-start w-full h-full py-5 px-4">
+            <div className="w-full">
+                {/* <h1 className="text-2xl font-semibold text-gray-800 mb-6 text-center">Iceberg To PostgreSQL Conversion</h1> */}
 
                 <Formik
                     initialValues={initialValues}
@@ -98,69 +97,80 @@ const IcebergToPostgreSQL = () => {
                     onSubmit={handleSubmit}
                 >
                     {({ values, setFieldValue }) => (
-                        <Form ref={scrollRef} className="p-5 h-full overflow-y-auto">
-                            {/* <div className="flex justify-center gap-4 pb-2">
-                                <h1 className="text-2xl">Iceberg To PostgreSQL Conversion</h1>
-                            </div> */}
+                        <Form className="space-y-1">
+                            <section>
+                                <h2 className="text-xl text-start font-medium text-gray-700 mb-2">Iceberg Configuration</h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10">
+                                    <InputField label="Bucket Name:" name="bucket_name" type="text" placeholder="Enter Bucket Name" value={values.bucket_name} />
+                                    <InputField label="Catalog Name:" name="catalog_name" type="text" placeholder="Enter Catalog Name" value={values.catalog_name} />
+                                    <InputField label="Database Name:" name="database_name" type="text" placeholder="Enter Database Name" value={values.database_name} />
+                                    <FileUpload
+                                        label="Upload JSON Key File:"
+                                        name="jsonFile"
+                                        accept=".json"
+                                        value={values.jsonFile}
+                                        onChange={(e) => {
+                                            const file = e.currentTarget.files[0];
+                                            if (file && file.type === 'application/json') {
+                                                setFieldValue('jsonFile', file);
+                                            } else {
+                                                alert('Only JSON files are allowed!');
+                                            }
+                                        }}
+                                    />
+                                </div>
+                            </section>
 
-                            <h6 className="pb-1 text-xl text-start">Iceberg Configuration</h6>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                <InputField label="Bucket Name:" name="bucket_name" type="text" placeholder="Enter Bucket Name" value={values?.bucket_name} />
-                                <InputField label="Catalog Name:" name="catalog_name" type="text" placeholder="Enter Catalog Name" value={values?.catalog_name} />
-                                <InputField label="Database Name:" name="database_name" type="text" placeholder="Enter Database Name" value={values?.database_name} />
+                            <section>
+                                <h2 className="text-xl text-start font-medium text-gray-700 mb-2">PostgreSQL Configuration</h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10">
+                                    <InputField label="PostgreSQL Host:" name="postgreSQL_host" type="text" placeholder="Enter Host" value={values.postgreSQL_host} />
+                                    <InputField label="PostgreSQL Database:" name="postgreSQL_database" type="text" placeholder="Enter Database" value={values.postgreSQL_database} />
+                                    <InputField label="PostgreSQL User:" name="postgreSQL_user" type="text" placeholder="Enter User" value={values.postgreSQL_user} />
+                                    <InputField label="PostgreSQL Password:" name="postgreSQL_password" type="password" placeholder="Enter Password" value={values.postgreSQL_password} />
+                                </div>
+                            </section>
+
+                            <section>
+                                <h2 className="text-xl text-start font-medium text-gray-700 mb-2">SQL File Upload</h2>
                                 <FileUpload
-                                    label="Upload JSON Key File:"
-                                    name="jsonFile"
-                                    accept=".json"
-                                    value={values?.jsonFile}
+                                    label="Upload SQL File:"
+                                    name="sqlFile"
+                                    accept=".sql"
+                                    value={values.sqlFile}
                                     onChange={(e) => {
                                         const file = e.currentTarget.files[0];
-                                        if (file && file.type === 'application/json') {
-                                            setFieldValue('jsonFile', file);
-                                        } else {
-                                            alert('Only JSON files are allowed!');
+                                        if (file) {
+                                            const fileExtension = file.name.split('.').pop().toLowerCase();
+                                            if (fileExtension === 'sql') {
+                                                setFieldValue('sqlFile', file);
+                                            } else {
+                                                alert('Only SQL files are allowed!');
+                                            }
                                         }
                                     }}
                                 />
-                            </div>
+                            </section>
 
-                            <h6 className="pb-1 text-xl text-start">PostgreSQL Configuration</h6>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                <InputField label="PostgreSQL Host:" name="postgreSQL_host" type="text" placeholder="Enter PostgreSQL Host" value={values?.postgreSQL_host} />
-                                <InputField label="PostgreSQL Database:" name="postgreSQL_database" type="text" placeholder="Enter PostgreSQL Database" value={values?.postgreSQL_database} />
-                                <InputField label="PostgreSQL User:" name="postgreSQL_user" type="text" placeholder="Enter PostgreSQL User" value={values?.postgreSQL_user} />
-                                <InputField label="PostgreSQL Password:" name="postgreSQL_password" type="password" placeholder="Enter PostgreSQL Password" value={values?.postgreSQL_password} />
-                            </div>
-
-                            <h6 className="pb-1 text-xl text-start">SQL File Configuration</h6>
-                            <FileUpload
-                                label="Upload SQL File:"
-                                name="sqlFile"
-                                accept=".sql"
-                                placeholder="(.sql)"
-                                value={values?.sqlFile}
-                                onChange={(e) => {
-                                    const file = e.currentTarget.files[0];
-                                    if (file) {
-                                        const fileExtension = file.name.split('.').pop().toLowerCase();
-                                        if (fileExtension === 'sql') {
-                                            setFieldValue('sqlFile', file);
-                                        } else {
-                                            alert('Only SQL files are allowed!');
-                                        }
-                                    }
-                                }}
-                            />
-
-                            <button type="submit" className={`w-full ${startLogging ? "bg-blue-300" : "bg-primary"} text-white py-2 px-4 rounded-lg hover:bg-hover mt-4`} disabled={startLogging}>
+                            <button
+                                type="submit"
+                                className={`w-full text-white py-2 px-4 rounded-lg transition-colors duration-200 
+                                    ${startLogging ? "bg-primary/50 cursor-not-allowed" : "bg-primary hover:bg-primaryHover"}`}
+                                disabled={startLogging}
+                            >
                                 {startLogging ? "Converting..." : "Convert to PostgreSQL"}
                             </button>
 
-                            <div className="mt-5 mb-6 p-3 text-start text-black max-h-90">
-                                {displayedLogs.map((log, index) => (
-                                    <p key={index} className="mb-1">{log}</p>
-                                ))}
-                            </div>
+                            {displayedLogs.length > 0 && (
+                                <div
+                                    ref={scrollRef}
+                                    className="mt-6 p-4 rounded-md bg-gray-100 max-h-80 overflow-y-auto text-sm text-gray-800"
+                                >
+                                    {displayedLogs.map((log, index) => (
+                                        <p key={index} className="mb-1">{log}</p>
+                                    ))}
+                                </div>
+                            )}
                         </Form>
                     )}
                 </Formik>

@@ -9,7 +9,10 @@ const Navbar = () => {
                 <div className="flex items-center gap-2">
                     <img src={logo} width={80} className="min-w-[40px]" />
                 </div>
-                <h1 className="uppercase font-fw_600 text-2xl">Aucmen Vega</h1>
+                <div>
+                <h1 className="uppercase font-fw_700 text-4xl">Acumen Vega Iceberg</h1>
+                <h6 className="text-sm">Migrate and Unify Your Data to Iceberg on Google Cloud</h6>
+                </div>
                 <button
                     onClick={() => {
                         localStorage.removeItem("accessToken");
