@@ -7,3 +7,7 @@ export const ConversionBigqueryToIceberg = (formData) => {
 export const ConversionDataFilesToIceberg = (formData) => {
   return api.post(`/convert`, formData);
 };
+
+export const ConversionPostgresToIceberg = (formData) => {
+  return api.post(`/postgres_to_iceberg`, formData);
+};

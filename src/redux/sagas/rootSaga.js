@@ -1,6 +1,6 @@
 import { all } from "redux-saga/effects";
 import { emailLoginWatcher, googleLoginWatcher, signupWatcher } from "./authSaga";
-import { handleBigQueryToIcebergWatcher, handleDataFilesToIcebergWatcher } from "./conversionSaga";
+import { handleBigQueryToIcebergWatcher, handleDataFilesToIcebergWatcher, handlePostgresToIcebergWatcher } from "./conversionSaga";
 
 export default function* rootSaga() {
         yield all([
@@ -9,5 +9,6 @@ export default function* rootSaga() {
                 emailLoginWatcher(),
                 handleBigQueryToIcebergWatcher(),
                 handleDataFilesToIcebergWatcher(),
+                handlePostgresToIcebergWatcher(),
         ]);
 }
