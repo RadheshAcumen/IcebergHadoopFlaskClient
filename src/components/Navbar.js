@@ -10,8 +10,8 @@ const Navbar = () => {
                     <img src={logo} width={80} className="min-w-[40px]" />
                 </div>
                 <div>
-                <h1 className="uppercase font-fw_700 text-4xl">Acumen Vega Iceberg</h1>
-                <h6 className="text-sm">Migrate and Unify Your Data to Iceberg on Google Cloud</h6>
+                <h1 className="fw_700 text-4xl">Acumen Vega Iceberg</h1>
+                <h6 className="text-base">Migrate and Unify Your Data to Iceberg on Google Cloud</h6>
                 </div>
                 <button
                     onClick={() => {
