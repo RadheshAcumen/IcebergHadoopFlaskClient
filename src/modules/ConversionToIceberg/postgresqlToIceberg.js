@@ -1,91 +1,85 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import InputField from '../../components/forms/inputFiled';
 import FileUpload from '../../components/forms/fileUpload';
-import { useLocation, useNavigate } from 'react-router-dom';
+import errorToast from '../../components/toasts/errorToast';
+import successToast from '../../components/toasts/successToast';
+import LogViewer from '../../components/formatResult';
+import { useDispatch } from 'react-redux';
+import { postgresToIceberg } from '../../redux/actions/conversionAction';
 
 const PostgresqlToIceberg = () => {
+    const dispatch = useDispatch();
     const initialValues = {
         postgres_host: '',
-        postgres_database: '',
+        postgres_db: '',
         postgres_user: '',
         postgres_password: '',
-        gcs_name: '',
-        jsonFile: null,
+        gcs_bucket_name: '',
+        gcp_key_file: null,
     };
 
     const validationSchema = Yup.object({
         postgres_host: Yup.string().required('Required!'),
-        postgres_database: Yup.string().required('Required!'),
+        postgres_db: Yup.string().required('Required!'),
         postgres_user: Yup.string().required('Required!'),
         postgres_password: Yup.string().required('Required!'),
-        gcs_name: Yup.string().required('Required!'),
-        jsonFile: Yup.mixed()
+        gcs_bucket_name: Yup.string().required('Required!'),
+        gcp_key_file: Yup.mixed()
             .required('Required!')
             .test('fileType', 'Only JSON files are allowed!', (value) =>
                 value ? value.type === 'application/json' : false
             ),
     });
 
-    const logMessages = [
-        "Processing tables in PostgreSQL database...",
-        "Table 'department' does not exist. Creating new table...",
-        "Table 'department' created and data loaded successfully.",
-        "Total processing time: 3.0 seconds",
-        "Table 'employees' does not exist. Creating new table...",
-        "Table 'employees' created and data loaded successfully.",
-        "Total processing time: 9.0 seconds",
-        "Table 'productsupplies' does not exist. Creating new table...",
-        "Table 'productsupplies' created and data loaded successfully.",
-        "Total processing time: 10.0 seconds",
-        "Table 'suppliers' does not exist. Creating new table...",
-        "Table 'suppliers' created and data loaded successfully.",
-        "Total processing time: 20.0 seconds",
-        "Memory usage: 50.0 MB",
-        "Conversion complete!"
-    ];
+    const [conversionResult, setConversionResult] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [isSuccess, setIsSuccess] = useState(false);
 
-    const [displayedLogs, setDisplayedLogs] = useState([]);
-    const [startLogging, setStartLogging] = useState(false);
-    const scrollRef = useRef(null);
-
-    useEffect(() => {
-        if (startLogging) {
-            let index = 0;
-            const interval = setInterval(() => {
-                setDisplayedLogs((prevLogs) => [...prevLogs, logMessages[index]]);
-                index++;
-                if (scrollRef.current) {
-                    scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-                }
-                if (index === logMessages.length) {
-                    clearInterval(interval);
-                    setStartLogging(false);
-                }
-            }, 2000);
-
-            return () => clearInterval(interval);
-        }
-    }, [startLogging]);
-
-    const handleSubmit = (values) => {
-        console.log('Form values:', values);
-        setDisplayedLogs([]);
-        setStartLogging(true);
+    const onSuccess = (data) => {
+        setIsSuccess(true);
+        setConversionResult(data.data.data);
+        successToast(data.data.message);
+        setLoading(false);
     };
 
-    const location = useLocation();
-    const currentPath = location.pathname.split('/')[1] || "Acumen Vega";
-    const navigate = useNavigate();
+    const onError = (error, resetForm) => {
+        setLoading(false);
+        setIsSuccess(false);
+        const message = error?.data?.message || 'Something went wrong!';
+        setConversionResult(message);
+        errorToast(message);
+    };
+
+    const handleSubmit = async (values, resetForm) => {
+        const formData = new FormData();
+        formData.append('postgres_host', values.postgres_host);
+        formData.append('postgres_db', values.postgres_db);
+        formData.append('postgres_user', values.postgres_user);
+        formData.append('postgres_password', values.postgres_password);
+        formData.append('gcs_bucket_name', values.gcs_bucket_name);
+        if (values.gcp_key_file instanceof File) {
+            formData.append('gcp_key_file', values.gcp_key_file);
+        }
+        setLoading(true);
+        setConversionResult(null);
+        setIsSuccess(false);
+        dispatch(postgresToIceberg(formData, onSuccess, (error) => onError(error, resetForm)));
+    };
 
     return (
         <div className="flex justify-center items-start w-full h-full py-5 px-4">
             <div className="w-full">
+                {loading && (
+                    <div className="fixed inset-0 z-50 bg-black bg-opacity-10 flex justify-center items-center">
+                        <div className="loader ease-linear rounded-full border-4 border-t-4 border-primary h-12 w-12 animate-spin"></div>
+                    </div>
+                )}
                 <Formik
                     initialValues={initialValues}
                     validationSchema={validationSchema}
-                    onSubmit={handleSubmit}
+                    onSubmit={(values, { resetForm }) => handleSubmit(values, resetForm)}
                 >
                     {({ values, setFieldValue }) => (
                         <Form className="space-y-1">
@@ -93,7 +87,7 @@ const PostgresqlToIceberg = () => {
                                 <h2 className="text-xl text-start font-medium text-gray-700 mb-2">PostgreSQL Configuration</h2>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10">
                                     <InputField label="PostgreSQL Host:" name="postgres_host" type="text" placeholder="Enter Postgres Host" value={values.postgres_host} />
-                                    <InputField label="PostgreSQL Database:" name="postgres_database" type="text" placeholder="Enter Database" value={values.postgres_database} />
+                                    <InputField label="PostgreSQL Database:" name="postgres_db" type="text" placeholder="Enter Database" value={values.postgres_db} />
                                     <InputField label="PostgreSQL User:" name="postgres_user" type="text" placeholder="Enter User" value={values.postgres_user} />
                                     <InputField label="PostgreSQL Password:" name="postgres_password" type="password" placeholder="Enter Password" value={values.postgres_password} />
                                 </div>
@@ -102,16 +96,16 @@ const PostgresqlToIceberg = () => {
                             <section>
                                 <h2 className="text-xl text-start font-medium text-gray-700 mb-2">GCP Configuration</h2>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10">
-                                    <InputField label="GCS Bucket Name:" name="gcs_name" type="text" placeholder="Enter GCS Bucket Name" value={values.gcs_name} />
+                                    <InputField label="GCS Bucket Name:" name="gcs_bucket_name" type="text" placeholder="Enter GCS Bucket Name" value={values.gcs_bucket_name} />
                                     <FileUpload
                                         label="Upload JSON Key File:"
-                                        name="jsonFile"
+                                        name="gcp_key_file"
                                         accept=".json"
-                                        value={values.jsonFile}
+                                        value={values.gcp_key_file}
                                         onChange={(e) => {
                                             const file = e.currentTarget.files[0];
                                             if (file && file.type === 'application/json') {
-                                                setFieldValue('jsonFile', file);
+                                                setFieldValue('gcp_key_file', file);
                                             } else {
                                                 alert('Only JSON files are allowed!');
                                             }
@@ -123,20 +117,26 @@ const PostgresqlToIceberg = () => {
                             <button
                                 type="submit"
                                 className={`w-full text-white py-2 px-4 rounded-lg transition-colors duration-200 
-                                    ${startLogging ? "bg-primary/50 cursor-not-allowed" : "bg-primary hover:bg-primaryHover"}`}
-                                disabled={startLogging}
+                                    ${loading ? "bg-primary/50 cursor-not-allowed" : "bg-primary hover:bg-primaryHover"}`}
+                                disabled={loading}
                             >
-                                {startLogging ? "Converting..." : "Convert to Iceberg"}
+                                {loading ? "Converting..." : "Convert to Iceberg"}
                             </button>
 
-                            {displayedLogs.length > 0 && (
+                            {conversionResult && (
                                 <div
-                                    ref={scrollRef}
-                                    className="mt-6 p-4 rounded-md bg-gray-100 max-h-80 overflow-y-auto text-sm text-gray-800"
+                                    className={`mt-6 p-4 text-sm text-start rounded-md border-l-4
+                                    ${isSuccess
+                                            ? 'bg-green-50 border-green-400 text-green-800'
+                                            : 'bg-red-50 border-red-400 text-red-800'
+                                        }`}
                                 >
-                                    {displayedLogs.map((log, index) => (
-                                        <p key={index} className="mb-1">{log}</p>
-                                    ))}
+                                    <div className="flex items-center mb-2">
+                                        <span className={`text-lg font-semibold ${isSuccess ? 'text-green-600' : 'text-red-600'}`}>
+                                            {isSuccess ? '✅ Conversion Result:' : '❌ Error:'}
+                                        </span>
+                                    </div>
+                                    <LogViewer log={conversionResult} />
                                 </div>
                             )}
                         </Form>
