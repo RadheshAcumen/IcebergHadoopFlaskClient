@@ -3,9 +3,6 @@ import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import InputField from '../../components/forms/inputFiled';
 import FileUpload from '../../components/forms/fileUpload';
-import { useLocation, useNavigate } from 'react-router-dom';
-import back from "../../assets/icons/back.png";
-import { formatString } from '../../components/helper/helper';
 import { useDispatch } from 'react-redux';
 import { bigqueryToIceberg } from '../../redux/actions/conversionAction';
 import successToast from '../../components/toasts/successToast';
@@ -14,10 +11,6 @@ import LogViewer from '../../components/formatResult';
 
 const IcebergToBigQuery = () => {
     const dispatch = useDispatch();
-    const location = useLocation();
-    const currentPath = location.pathname.split('/')[1] || "Acumen Vega";
-    const navigate = useNavigate();
-
     const initialValues = {
         project_id: '',
         dataset_id: '',

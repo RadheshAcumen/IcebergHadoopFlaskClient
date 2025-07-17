@@ -57,9 +57,6 @@ const IcebergToPostgreSQL = () => {
     const [displayedLogs, setDisplayedLogs] = useState([]);
     const [startLogging, setStartLogging] = useState(false);
     const scrollRef = useRef(null);
-    const location = useLocation();
-    const currentPath = location.pathname.split('/')[1] || "Acumen Vega";
-    const navigate = useNavigate();
 
     useEffect(() => {
         if (startLogging) {

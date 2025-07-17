@@ -3,7 +3,6 @@ import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import InputField from '../../components/forms/inputFiled';
 import FileUpload from '../../components/forms/fileUpload';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { dataFilesToIceberg } from '../../redux/actions/conversionAction';
 import successToast from '../../components/toasts/successToast';
@@ -12,9 +11,6 @@ import LogViewer from '../../components/formatResult';
 
 const DataFilesToIceberg = () => {
     const dispatch = useDispatch();
-    const location = useLocation();
-    const navigate = useNavigate();
-
     const initialValues = {
         gcs_bucket: '',
         json_key: null,
