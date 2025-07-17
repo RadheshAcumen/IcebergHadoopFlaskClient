@@ -6,8 +6,9 @@ import IcebergToPostgreSQL from "../modules/ConversionFromIceberg/icebergtoPostg
 import IcebergToSnowflake from "../modules/ConversionFromIceberg/icebergtoSnowflake";
 import IcebergToBigQuery from "./ConversionFromIceberg/icebergtoBigquery";
 import { useEffect, useState } from "react";
+import SnowflakeToIceberg from "./ConversionToIceberg/snowflakeToIceberg";
 
-const sources = ['Iceberg', 'Data Files', 'PostgreSQL', 'SQL Server'];
+const sources = ['Iceberg', 'Data Files', 'PostgreSQL', 'SQL Server', 'Snowflake'];
 const icebergTargets = ['BigQuery', 'PostgreSQL', 'Snowflake'];
 const catalogs = ['Hadoop', 'Polarized'];
 
@@ -26,6 +27,7 @@ const Dashbaord = () => {
         'PostgreSQL-Iceberg': <PostgresqlToIceberg />,
         'Iceberg-SQL Server': <SQLServerToIceberg />,
         'SQL Server-Iceberg': <SQLServerToIceberg />,
+        'Snowflake-Iceberg': <SnowflakeToIceberg />,
     };
 
     const handleSourceChange = (e) => {
